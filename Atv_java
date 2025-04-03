@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Scanner;
 
 public class Atv_java {
 
@@ -44,14 +43,12 @@ public class Atv_java {
 
                 if (dados.length == 3) {
                     try {
-
                         String item = dados[0].trim();
                         double preco = Double.parseDouble(dados[1].trim());
                         int quantidade = Integer.parseInt(dados[2].trim());
                         double total = preco * quantidade;
 
-
-                        writer.write(String.format("%s,%.2f\n", item, total));
+                        writer.write(String.format("%s,%.2f%s", item, total, System.lineSeparator()));
                     } catch (NumberFormatException e) {
                         System.out.println("Erro ao converter valores numéricos: " + linha);
                     }
