@@ -1,64 +1,41 @@
 import java.io.*;
 
 public class Atv_java {
-
     public static void main(String[] args) {
-        String caminhoA = "C:\\Users\\Public\\Documents\\rYANN.txt";
-
-        System.out.println("Caminho do arquivo: " + caminhoA);
-        Resumo(caminhoA);
+        String caminho = "C:\\Users\\Public\\Documents\\rYANN.txt";
+        gerarResumo(caminho);
     }
 
-    public static void Resumo(String caminhoB) {
-        File in = new File(caminhoB);
+    public static void gerarResumo(String caminho) {
+        File entrada = new File(caminho);
+        File saida = new File(entrada.getParent(), "out/summary.csv");
 
-        if (!in.exists()) {
-            System.out.println("Erro: O arquivo não foi encontrado.");
-            return;
-        } else if (!in.isFile()) {
-            System.out.println("Erro: O caminho não é um arquivo válido.");
+        if (!entrada.exists()) {
+            System.out.println("Este arquivo não foi encontrado.");
             return;
         } else {
-            System.out.println("Arquivo encontrado: " + caminhoB);
+            System.out.println("Este arquivo foi encontrado com sucesso: " + caminho);
         }
 
-        File pastaSaida = new File(in.getParent(), "out");
-        if (!pastaSaida.exists()) {
-            if (!pastaSaida.mkdirs()) {
-                System.out.println("Erro: Não foi possível criar a pasta de saída.");
-                return;
-            }
-        }
+        new File(saida.getParent()).mkdirs();
 
-        File out = new File(pastaSaida, "summary.csv");
+        try (BufferedReader br = new BufferedReader(new FileReader(entrada));
+             BufferedWriter bw = new BufferedWriter(new FileWriter(saida))) {
 
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(in));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(out))
-        ) {
             String linha;
+            System.out.println("Conteúdo do arquivo:");
+            while ((linha = br.readLine()) != null) {
+                System.out.println(linha); // Isso aqui exibe o conteúdo que ta dentro do  arquivo
 
-            while ((linha = reader.readLine()) != null) {
                 String[] dados = linha.split(",");
-
                 if (dados.length == 3) {
-                    try {
-                        String item = dados[0].trim();
-                        double preco = Double.parseDouble(dados[1].trim());
-                        int quantidade = Integer.parseInt(dados[2].trim());
-                        double total = preco * quantidade;
-
-                        writer.write(String.format("%s,%.2f%s", item, total, System.lineSeparator()));
-                    } catch (NumberFormatException e) {
-                        System.out.println("Erro ao converter valores numéricos: " + linha);
-                    }
-                } else {
-                    System.out.println("Linha inválida ignorada: " + linha);
+                    String item = dados[0].trim();
+                    double total = Double.parseDouble(dados[1].trim()) * Integer.parseInt(dados[2].trim());
                 }
             }
-            System.out.println("Resumo gerado com sucesso em: " + out.getAbsolutePath());
+            System.out.println( saida.getAbsolutePath());
         } catch (IOException e) {
-            System.out.println("Erro ao ler ou escrever o arquivo: " + e.getMessage());
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 }
